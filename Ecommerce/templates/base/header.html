@@ -78,7 +78,7 @@
                             {% else %}
                             <small class="title text-muted">Welcome {{ user.first_name }}</small>
                             <div>
-                                <a href="#">Dash Board</a> <span class="dark-transp"> | </span>
+                                <a href="{% url "dashboard" %}">Dash Board</a> <span class="dark-transp"> | </span>
                                 <a href="{% url "logout" %}"> logout</a>
                             </div>
                             {% endif %}

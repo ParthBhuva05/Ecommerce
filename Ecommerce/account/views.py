@@ -74,7 +74,7 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             messages.success(request, "You are logged in...!")
-            return redirect('home')
+            return redirect('dashboard')
         else:
             messages.error(request, "Invalid login credentials...!")
             return redirect('login')
@@ -108,3 +108,9 @@ def activate(request, uidb64, token):
 
 
         # https://myaccount.google.com/apppasswords?rapt=AEjHL4Optl0sAUYnqeb5P8wz9WruqZK-IKDcaeYPhCdGN7pm-JxQEFPwlwTyPZ82cHHr-sZKEV7aJXPlNEUJO2vauSED18DgvTDWw9fsxG0NXiQ-7ZC8hso
+
+
+# Dashboard 
+@login_required(login_url='login')
+def dashboard(request):
+    return render(request, 'account/dashboard.html')
