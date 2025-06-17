@@ -50,8 +50,11 @@ def register(request):
             send_email = EmailMessage(mail_subject, message, to = [to_email])
             send_email.send()
 
-            messages.success(request, "Registration Successfull...!")
-            return redirect('register')
+            # messages.success(request, "Thank you for registrationwith us we have to sent you on verification mail to your email")
+            # return redirect('register')
+
+            return redirect('account/login/?command=varification&email=' + email)
+
         else:
             messages.error(request, 'Registration Faield...!')
             # return redirect('register')
@@ -81,10 +84,12 @@ def login(request):
 
     return render(request, 'account/login.html')
 
+
 @login_required(login_url='login')
 def logout(request):
     auth.logout(request)
     messages.success(request, "You are logout...!")
+    return redirect('login')
 
 
 
@@ -114,3 +119,42 @@ def activate(request, uidb64, token):
 @login_required(login_url='login')
 def dashboard(request):
     return render(request, 'account/dashboard.html')
+
+
+# Forgot Password 
+
+def forgotpassword(request):
+    if request.method=="POST":
+        email = request.POST['email']
+        if Account.objects.filter(email = email).exists():
+            user = Account.objects.get(email__exact = email)
+
+            # send mail for reset password
+
+            current_site  = get_current_site(request)
+            mail_subject = "Reset your Password"
+            message = render_to_string('account/reset_password_mail.html', {
+                'user':user,
+                'domain':current_site.domain,
+                'uid':urlsafe_base64_encode(force_bytes(user.id)),
+                'token':default_token_generator.make_token(user)
+            })
+
+            to_email = email
+            send_email = EmailMessage(mail_subject, message, to = [to_email])
+            send_email.send()
+            messages.success(request, 'Reset Password mail has been send your email.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Account does not exists!')
+            return redirect('forgotpassword')
+
+    else:
+        return render(request, 'account/forgotpassword.html')
+
+
+
+# resetpassword_validate
+
+def resetpassword_validate(request, uidb64, token):
+    return HttpResponse("Okeyyy")
